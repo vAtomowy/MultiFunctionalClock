@@ -11,6 +11,7 @@ set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(INCLUDE_DIRS
     ${SRC_DIR}/App/Inc
+    ${SRC_DIR}/Libs/MyLibs/Low-Level/GPIO/Inc/
     ${SRC_DIR}/Libs/CMSIS/Include
     ${SRC_DIR}/Libs/CMSIS/Device/ST/STM32L4xx/Include
     ${SRC_DIR}/Libs/STM32L4xx_HAL_Driver/Inc/
@@ -24,6 +25,7 @@ set(C_SRCS
     ${SRC_DIR}/App/Src/syscalls.c
     ${SRC_DIR}/App/Src/sysmem.c
     ${SRC_DIR}/App/Src/system_stm32l4xx.c
+    ${SRC_DIR}/Libs/MyLibs/Low-Level/GPIO/Src/gpio.c
     ${SRC_DIR}/Libs/STM32L4xx_HAL_Driver/src/stm32l4xx_hal.c
     ${SRC_DIR}/Libs/STM32L4xx_HAL_Driver/src/stm32l4xx_hal_cortex.c
     ${SRC_DIR}/Libs/STM32L4xx_HAL_Driver/src/stm32l4xx_hal_dma.c

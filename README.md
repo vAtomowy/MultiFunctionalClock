@@ -1,0 +1,1 @@
+<h2 style="text-align: center;"> The firmware is designed for the mainboard of the MultiFunctionalClock project, based on the STM32L431RCT6. </h2>
