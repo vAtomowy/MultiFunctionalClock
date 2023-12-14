@@ -1,1 +1,2 @@
-jakas didoa bezposredio z STM
+jakas didoa bezposredio z STM 
+zworka / żeby nie dublować mas / jeden JTAG 

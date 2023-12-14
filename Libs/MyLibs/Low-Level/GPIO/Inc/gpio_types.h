@@ -1,3 +1,9 @@
+#include "stm32l4xx.h" 
+#include "stm32l431xx.h"
+
+#define MODER_MASK 0x3UL
+#define PTR_MASK 0x2UL
+
 // ERROR TYPE
 typedef enum { 
     OK = 0, 
@@ -29,14 +35,12 @@ typedef enum {
 
 //PORT
 typedef enum{ 
-    PORTA = 0,
-    PORTB, 
-    PORTC, 
-    PORTD, 
-    PORTE, 
-    PORTF, 
-    PORTG, 
-    PORTH 
+    PORTA = GPIOA_BASE, 
+    PORTB = GPIOB_BASE,   
+    PORTC = GPIOC_BASE, 
+    PORTD = GPIOD_BASE,  
+    PORTE = GPIOE_BASE,  
+    PORTH = GPIOH_BASE 
 }port_t;
 
 // PIN PARAMETERS 

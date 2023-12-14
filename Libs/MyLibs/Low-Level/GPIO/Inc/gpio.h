@@ -1,5 +1,4 @@
 #include "gpio_types.h"
-#include "stm32l4xx.h"
 
 typedef struct{ 
     pin_t pin; 

@@ -1,4 +1,3 @@
-
 #include "gpio.h" 
 
 error_t InitPin(cfg_pin_t * cfg_pin){ 
@@ -6,9 +5,11 @@ error_t InitPin(cfg_pin_t * cfg_pin){
     // turn clock / callback 
 
     // set MODE(MODER) 
-     
-    uint32_t moder_address = (cfg_pin->port) * 0x400; 
-    //*moder_address = ((uint16_t)(cfg_pin->mode) << (uint16_t)(cfg_pin->port)); 
+    volatile uint32_t * moder_address = (uint32_t*)(cfg_pin->port);
+    uint32_t moder_mask = ~((cfg_pin->mode) << ((cfg_pin->pin) * PTR_MASK));
+    uint32_t reg = *moder_address;
+    reg = (reg & moder_mask);
+    *moder_address = reg;
 
     // set TYPE(OTYPER): PP/OD 
 
