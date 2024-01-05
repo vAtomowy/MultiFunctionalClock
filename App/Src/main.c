@@ -20,6 +20,7 @@ int main(void)
     cfg_pin_t PINA;
 
     PINA.pin = PIN8; 
+    PINA.type = OPEN_DRAIN; 
     PINA.port = PORTA; 
     PINA.mode = OUT;  
     

@@ -1,9 +1,6 @@
 #include "stm32l4xx.h" 
 #include "stm32l431xx.h"
 
-#define MODER_MASK 0x3UL
-#define PTR_MASK 0x2UL
-
 // ERROR TYPE
 typedef enum { 
     OK = 0, 
