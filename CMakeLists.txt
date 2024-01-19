@@ -16,6 +16,7 @@ set(INCLUDE_DIRS
     ${SRC_DIR}/Libs/CMSIS/Device/ST/STM32L4xx/Include
     ${SRC_DIR}/Libs/STM32L4xx_HAL_Driver/Inc/
     ${SRC_DIR}/Libs/STM32L4xx_HAL_Driver/Inc/Legacy
+    ${SRC_DIR}/Test/Others/
 )
 
 set(C_SRCS
@@ -39,6 +40,7 @@ set(C_SRCS
     ${SRC_DIR}/Libs/STM32L4xx_HAL_Driver/src/stm32l4xx_hal_pwr_ex.c
     ${SRC_DIR}/Libs/STM32L4xx_HAL_Driver/src/stm32l4xx_hal_rcc.c
     ${SRC_DIR}/Libs/STM32L4xx_HAL_Driver/src/stm32l4xx_hal_rcc_ex.c
+    ${SRC_DIR}/Test/Others/GPIO_TEST.c
 )
 
 set(ASM_SRCS

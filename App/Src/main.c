@@ -3,8 +3,6 @@
 #include "stm32l431xx.h"
 #include "stm32l4xx_hal_def.h"
 
-#include "gpio.h"
-
 void SystemClock_Config(void);
 void init_blink(void);
 void test_blink(void);
@@ -12,21 +10,17 @@ void test_blink(void);
 int main(void)
 {
 
-
     HAL_Init();
     SystemClock_Config();
 
     __HAL_RCC_GPIOA_CLK_ENABLE(); 
-    cfg_pin_t PINA;
+    __HAL_RCC_GPIOB_CLK_ENABLE(); 
+    __HAL_RCC_GPIOC_CLK_ENABLE(); 
 
-    PINA.pin = PIN8; 
-    PINA.type = OPEN_DRAIN; 
-    PINA.port = PORTA; 
-    PINA.mode = OUT;  
+    // test hardware'u GPIO
+    GPIO_TEST();
     
     init_blink();
-    InitPin(&PINA); 
-
 
     while (1)
     {
@@ -49,11 +43,12 @@ void init_blink(void){
 
 }
 
-void test_blink(void){ 
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET); 
-        HAL_Delay(100);
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_RESET); 
-        HAL_Delay(200);
+void test_blink(void)
+{ 
+      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET); 
+      HAL_Delay(100);
+      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_RESET); 
+      HAL_Delay(200);
 } 
 
 void SystemClock_Config(void)

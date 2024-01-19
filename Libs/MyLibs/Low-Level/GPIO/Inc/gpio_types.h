@@ -9,26 +9,26 @@ typedef enum {
     ERR3 
 }error_t;
 
-
 // PIN 
 typedef enum { 
-    PIN0 = 0,
-    PIN1,
-    PIN2,
-    PIN3,
-    PIN4,
-    PIN5,
-    PIN6,
-    PIN7,
-    PIN8,
-    PIN9,
-    PIN10,
-    PIN11,
-    PIN12,
-    PIN13,
-    PIN14,
-    PIN15
-}pin_t;
+    PIN0  = (1 << 0),
+    PIN1  = (1 << 1),
+    PIN2  = (1 << 2),
+    PIN3  = (1 << 3),
+    PIN4  = (1 << 4),
+    PIN5  = (1 << 5),
+    PIN6  = (1 << 6),
+    PIN7  = (1 << 7),
+    PIN8  = (1 << 8),
+    PIN9  = (1 << 9),
+    PIN10 = (1 << 10),
+    PIN11 = (1 << 11),
+    PIN12 = (1 << 12),
+    PIN13 = (1 << 13),
+    PIN14 = (1 << 14),
+    PIN15 = (1 << 15)
+} pin_t;
+
 
 //PORT
 typedef enum{ 
@@ -78,22 +78,21 @@ typedef enum{
     UNDEF 
 }state_t;
 
-//TODO: zmeinic nawzy na bez podłogi & odpecić z HAL-a
 typedef enum {
-    AF_0 = 0,
-    AF_1,
-    AF_2,
-    AF_3,
-    AF_4,
-    AF_5,
-    AF_6,
-    AF_7,
-    AF_8,
-    AF_9,
-    AF_10,
-    AF_11,
-    AF_12,
-    AF_13,
-    AF_14,
-    AF_15
+    AF0 = 0,
+    AF1,
+    AF2,
+    AF3,
+    AF4,
+    AF5,
+    AF6,
+    AF7,
+    AF8,
+    AF9,
+    AF10,
+    AF11,
+    AF12,
+    AF13,
+    AF14,
+    AF15
 } alt_val_t;

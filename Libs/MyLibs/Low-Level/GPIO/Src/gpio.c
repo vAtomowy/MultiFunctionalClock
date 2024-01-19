@@ -1,103 +1,97 @@
 #include "gpio.h" 
-
+//TODO: magic numbers ! 
 error_t InitPin(cfg_pin_t * cfg_pin){ 
 
     // check turn clock & enable  
 
-    // set MODE(MODER) 
-    volatile uint32_t * address = (uint32_t*)(cfg_pin->port); //+ 0UL;
-    uint32_t mask = ~((cfg_pin->mode) << ((cfg_pin->pin) * 0x2UL));
-    WriteReg(address, mask, mask);
 
-    // set TYPE(OTYPER): PP/OD 
-    address = ((uint32_t*)(cfg_pin->port)) + 1UL;
-    mask = ~((cfg_pin->type) << ((cfg_pin->pin) * 0x1UL));
-    WriteReg(address, mask, mask);
+    // Which pins have to set ? 
+    // In other words: In which position [X] we have to apply cfg_pin settings ? 
+    // ex. REGISTER = (0b00X0100X)  
+    for(uint16_t position=0; position<16; ++position)
+    { 
+        if (cfg_pin->pin & (1 << position))
+        { 
+            // set MODE(MODER) 
+            volatile uint32_t * address = (uint32_t*)(cfg_pin->port); //+ 0U;
+            uint32_t bits_mask = ((0x3U) << ((position) * 0x2U));
+            uint32_t set_mask = ((cfg_pin->mode) << ((position) * 0x2U));
+            uint32_t clear_mask = (set_mask ^ bits_mask);
+            WriteReg(address, clear_mask, set_mask);                                     
 
-    // set SPEED(OSPEEDR) 
-    address = ((uint32_t*)(cfg_pin->port)) + 2UL;
-    mask = ~((cfg_pin->speed) << ((cfg_pin->pin) * 0x2UL));
-    WriteReg(address, mask, mask);
+            // set TYPE(OTYPER): PP/OD 
+            address = ((uint32_t*)(cfg_pin->port)) + 1U;
+            bits_mask = ((0x1U) << ((position) * 0x1U));
+            set_mask = ((cfg_pin->type) << ((position) * 0x1U));
+            clear_mask = (set_mask ^ bits_mask);
+            WriteReg(address, clear_mask, set_mask);                                   
 
-    // set PULL(PUPDR) 
-    address = ((uint32_t*)(cfg_pin->port)) + 3UL;
-    mask = ~((cfg_pin->pull) << ((cfg_pin->pin) * 0x2UL));
-    WriteReg(address, mask, mask);
+            // set SPEED(OSPEEDR) 
+            address = ((uint32_t*)(cfg_pin->port)) + 2U;
+            bits_mask = ((0x3U) << ((position) * 0x2U));
+            set_mask = ((cfg_pin->speed) << ((position) * 0x2U));
+            clear_mask = (set_mask ^ bits_mask);
+            WriteReg(address, clear_mask, set_mask);                                    
 
-    // set LOCK(later) - unused 
-    // address = ((uint32_t*)(cfg_pin->port)) + 7UL ;
-    // mask = ~((cfg_pin->type) << ((cfg_pin->pin) * 0x1UL));
-    // WriteReg(address, mask, mask);
+            // set PU(PUPDR) 
+            address = ((uint32_t*)(cfg_pin->port)) + 3U;
+            bits_mask = ((0x3U) << ((position) * 0x2U));
+            set_mask = ((cfg_pin->pull) << ((position) * 0x2U));
+            clear_mask = (set_mask ^ bits_mask);
+            WriteReg(address, clear_mask, set_mask);   
 
-    // set ALTERNATIVE_FUNC(AFRL and AFRH) 
-    
-    //TODO: alt val !!! i przesuenicie ! 
-    address = ((uint32_t*)(cfg_pin->port)) + 8UL;
-    mask = ~((cfg_pin->alt_val) << ((cfg_pin->pin) * 0x4UL));
-    WriteReg(address, mask, mask);
+            // set LOCK(later) - unused 
+            // address = ((uint32_t*)(cfg_pin->port)) + 7U;
+            // bits_mask = ((0x1U) << ((position) * 0x1U));
+            // set_mask = ((cfg_pin->lock) << ((position) * 0x1U));
+            // uint32_t clear_mask = (set_mask ^ bits_mask);
+            // WriteReg(address, clear_mask, set_mask);    
 
-    address = ((uint32_t*)(cfg_pin->port)) + 9UL;
-    mask = ~((cfg_pin->alt_val) << ((cfg_pin->pin) * 0x4UL));
-    WriteReg(address, mask, mask);
+            // set ALTERNATIVE_FUNC(AFRL and AFRH) 
+            
+            //TODO: alt val !!! i przesuenicie ! 
+            // address = ((uint32_t*)(cfg_pin->port)) + 8U;
+            // bits_mask = ((0xFU) << ((position) * 0x4U));
+            // set_mask = ((cfg_pin->alt_val) << ((position) * 0x4U));
+            // clear_mask = (set_mask ^ bits_mask);
+            // WriteReg(address, clear_mask, set_mask);   
 
-    // set DEFAULT VAL (BSRR and BRR)
-    WritePin((cfg_pin->port), (cfg_pin->pin), LOW); 
+            // address = ((uint32_t*)(cfg_pin->port)) + 9U;
+            // bits_mask = ((0xFU) << ((position) * 0x4U));
+            // set_mask = ((cfg_pin->alt_val) << ((position) * 0x4U));
+            // clear_mask = (set_mask ^ bits_mask);
+            // WriteReg(address, clear_mask, set_mask);  
 
+            // set DEFAUT VAL (ODR) TODO:obsluga bledów ! 
+            WritePin((cfg_pin->port), (cfg_pin->pin), LOW); 
+        }
+    }
     return OK; 
-
 }
 
 error_t DeInitPin(cfg_pin_t * cfg_pin){ 
     return OK;
 } 
 
-error_t InitPinsTheSame(cfg_pin_t * cfg_pin, uint16_t SET_PIN_MASK){ 
-
-    // The function sets all indicates pin agreed with cfg_pin structure  
-    // In this func field pin inside cfg_pin structure is irrelevant 
-    // The role of the settable pins is taken over by  SET_PIN_MASK 
-    // ex. cfg_pin uses its structure to set the pins SET_PIN MASK: 
-    // SET_PIN_MASK = 0x13   Pins 0, 1 and 4 will be setting !  
-    error_t err = OK;
-
-    uint32_t value = 0;
-    value = SET_PIN_MASK;
-    uint16_t thr = 32U - (__CLZ(value) - 16U);
-    uint16_t i =0U;
-
-    for(i;i<thr;i++){ 
-
-        cfg_pin->pin = thr;
-        err = InitPin(cfg_pin);
-        if(err > 0){ 
-            return err;
-        }
-    }
-    return err; 
-
-}
-
-error_t DeInitPinsTheSame(cfg_pin_t * cfg_pin, uint16_t SET_PIN_MASK){ 
-    // making is comming :) 
-    return OK;
-}
-
 error_t InitPort(cfg_pin_t * cfg_pin, port_t P){ 
 
     // The function sets absolutley all pins of single port agreed with cfg_pin structure
+    // The function sets all indicates pin agreed with cfg_pin structure  
+    // In this func field port inside cfg_pin structure is irrelevant 
+    // The role of the settable port is taken over by port_t P; 
     error_t err = OK;
 
     uint16_t i = 0U;
     const uint16_t max = 16U;
+
+    // modify port in cfg structure
     cfg_pin->port = P;
     
-    for(i;i<max;i++){ 
-
+    // fill port with settings from cfg_pin
+    for(i;i<max;i++)
+    { 
         cfg_pin->pin = i;  
-        err = InitPin(cfg_pin);
-        if(err > 0){ 
-            return err;
-        }
+        if(InitPin(cfg_pin) > 0) break;
     }
     return err; 
 }
@@ -107,38 +101,43 @@ error_t DeInitPort(cfg_pin_t * cfg_pin, port_t P){
     return OK;
 }
 
-error_t WritePin(port_t P, pin_t pin, state_t state){ 
+error_t WritePin(port_t P, uint16_t pin, state_t state){ 
     // using ODR
-    uint32_t *address = ((uint32_t*)(P)) + 5UL;
-    uint32_t mask = ~((state) << ((pin) * 0x1UL));
-    WriteReg(address, mask, mask);
+    for(uint16_t position=0; position<16; ++position)
+    { 
+        if (pin & (1 << position))
+        { 
+            volatile uint32_t *address = ((uint32_t*)(P)) + 5U;
+            uint32_t mask_1bit = ((0x1U) << ((position) * 0x1U));
+            uint32_t set_mask = ((state) << ((position) * 0x1U));
+            uint32_t clear_mask = set_mask ^ mask_1bit;
+            WriteReg(address, clear_mask, set_mask);
+        }
+    }
     return OK; 
 } 
 
-state_t ReadPin(port_t P, pin_t pin, state_t state){ 
-    uint32_t *address = ((uint32_t*)(P)) + 4UL;
-    uint32_t mask = ~((state) << ((pin) * 0x1UL));
+state_t ReadPin(port_t P, uint16_t pin){ 
+    volatile uint32_t *address = ((uint32_t*)(P)) + 5U;
     uint32_t res = *address;
-    return ((res & mask)); 
+    return ((res & pin) > 0) ? HIGH : LOW;  
 }
 
 error_t WritePort(port_t P, uint32_t port_val){ 
-    uint32_t *address = ((uint32_t*)(P)) + 4UL;
-    WriteReg(address, port_val, port_val);
+    uint32_t *address = ((uint32_t*)(P)) + 5U;
+    WriteReg(address, 0x0U, port_val);
     return OK;
 }
 
 uint32_t ReadPort(port_t P){ 
-    uint32_t *address = ((uint32_t*)(P)) + 4UL;
+    uint32_t *address = ((uint32_t*)(P)) + 5U;
     uint32_t res = *address;
     return (res); 
 }
 
-static void WriteReg(uint32_t * reg, uint32_t clear_mask, uint32_t set_mask){ 
-    // Method_1    
-    uint32_t mirror_reg = *reg;
-    mirror_reg = ~(mirror_reg ^ clear_mask);
+static void WriteReg(uint32_t * reg, uint32_t clear_mask, uint32_t set_mask)
+{ 
+    volatile uint32_t mirror_reg = *reg;
+    mirror_reg = (((mirror_reg) & (~(clear_mask))) | (set_mask));
     *reg = mirror_reg;
-    // Method 2
-    //MODIFY_REG(reg, clear_mask, set_mask); 
 }
