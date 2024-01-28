@@ -1031,7 +1031,6 @@ typedef struct
 #define ADC1_BASE             (AHB2PERIPH_BASE + 0x08040000UL)
 #define ADC1_COMMON_BASE      (AHB2PERIPH_BASE + 0x08040300UL)
 
-
 #define RNG_BASE              (AHB2PERIPH_BASE + 0x08060800UL)
 
 

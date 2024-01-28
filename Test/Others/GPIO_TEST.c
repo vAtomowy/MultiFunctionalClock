@@ -10,18 +10,19 @@ void delay(uint32_t n)
 
 void GPIO_TEST(void)
 { 
-    cfg_pin_t PINA; 
-    PINA.mode = OUT;
-    PINA.pin = PIN14; 
-    PINA.type = OPEN_DRAIN; 
-    PINA.speed = S_HIGH;
-    PINA.port = PORTB;   
-    InitPin(&PINA); 
+    // cfg_pin_t PINA; 
+    // PINA.mode = OUT;
+    // PINA.pin = PIN14; 
+    // PINA.type = OPEN_DRAIN; 
+    // PINA.speed = S_HIGH;
+    // PINA.port = PORTB;   
+    // InitPin(&PINA); 
 
     cfg_pin_t PINEK;
-    PINEK.pin = PIN13; 
+    PINEK.pin = PIN12 | PIN5; 
     PINEK.type = PUSH_PULL; 
-    PINEK.port = PORTB; 
+    PINEK.port = PORTB;
+    PINEK.alt_val = AF2; 
     PINEK.mode = OUT;  
     InitPin(&PINEK); 
 

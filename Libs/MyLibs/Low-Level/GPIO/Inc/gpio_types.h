@@ -9,6 +9,16 @@ typedef enum {
     ERR3 
 }error_t;
 
+// CLOCK BITS 
+typedef enum { 
+GPIOAEN = RCC_AHB2ENR_GPIOAEN,
+GPIOBEN = RCC_AHB2ENR_GPIOBEN, 
+GPIOCEN = RCC_AHB2ENR_GPIOCEN, 
+GPIODEN = RCC_AHB2ENR_GPIODEN,
+GPIOEEN = RCC_AHB2ENR_GPIOEEN, 
+GPIOHEN = RCC_AHB2ENR_GPIOHEN   
+} gpio_rcc_pin_t;
+
 // PIN 
 typedef enum { 
     PIN0  = (1 << 0),
@@ -30,7 +40,7 @@ typedef enum {
 } pin_t;
 
 
-//PORT
+// PORT
 typedef enum{ 
     PORTA = GPIOA_BASE, 
     PORTB = GPIOB_BASE,   

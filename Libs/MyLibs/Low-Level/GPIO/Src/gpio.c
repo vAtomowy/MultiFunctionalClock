@@ -2,8 +2,8 @@
 //TODO: magic numbers ! 
 error_t InitPin(cfg_pin_t * cfg_pin){ 
 
-    // check turn clock & enable  
-
+    // error flag
+    error_t error = OK;
 
     // Which pins have to set ? 
     // In other words: In which position [X] we have to apply cfg_pin settings ? 
@@ -11,7 +11,10 @@ error_t InitPin(cfg_pin_t * cfg_pin){
     for(uint16_t position=0; position<16; ++position)
     { 
         if (cfg_pin->pin & (1 << position))
-        { 
+        {
+            // check turning on clock & enable  
+            SetGpioClock(cfg_pin->port);  
+
             // set MODE(MODER) 
             volatile uint32_t * address = (uint32_t*)(cfg_pin->port); //+ 0U;
             uint32_t bits_mask = ((0x3U) << ((position) * 0x2U));
@@ -48,25 +51,29 @@ error_t InitPin(cfg_pin_t * cfg_pin){
             // WriteReg(address, clear_mask, set_mask);    
 
             // set ALTERNATIVE_FUNC(AFRL and AFRH) 
-            
-            //TODO: alt val !!! i przesuenicie ! 
-            // address = ((uint32_t*)(cfg_pin->port)) + 8U;
-            // bits_mask = ((0xFU) << ((position) * 0x4U));
-            // set_mask = ((cfg_pin->alt_val) << ((position) * 0x4U));
-            // clear_mask = (set_mask ^ bits_mask);
-            // WriteReg(address, clear_mask, set_mask);   
+            if(position < 8)
+            { 
+                address = ((uint32_t*)(cfg_pin->port)) + 8U;  // AFRL
+                bits_mask = ((0xFU) << ((position) * 0x4U));
+                set_mask = ((cfg_pin->alt_val) << ((position) * 0x4U));
+                clear_mask = (set_mask ^ bits_mask);
+                WriteReg(address, clear_mask, set_mask);   
+            }
+            else 
+            { 
+                address = ((uint32_t*)(cfg_pin->port)) + 9U;  // AFRH
+                bits_mask = ((0xFU) << ((position-0x8U) * 0x4U));
+                set_mask = ((cfg_pin->alt_val) << ((position-0x8U) * 0x4U));
+                clear_mask = (set_mask ^ bits_mask);
+                WriteReg(address, clear_mask, set_mask);  
+            }
 
-            // address = ((uint32_t*)(cfg_pin->port)) + 9U;
-            // bits_mask = ((0xFU) << ((position) * 0x4U));
-            // set_mask = ((cfg_pin->alt_val) << ((position) * 0x4U));
-            // clear_mask = (set_mask ^ bits_mask);
-            // WriteReg(address, clear_mask, set_mask);  
-
-            // set DEFAUT VAL (ODR) TODO:obsluga bledów ! 
-            WritePin((cfg_pin->port), (cfg_pin->pin), LOW); 
+            // check settings
+            WritePin((cfg_pin->port), (cfg_pin->pin), (cfg_pin->default_state));
+            if (ReadPin(cfg_pin->port,cfg_pin->pin) != cfg_pin->default_state) error = ERR1; 
         }
     }
-    return OK; 
+    return error; 
 }
 
 error_t DeInitPin(cfg_pin_t * cfg_pin){ 
@@ -140,4 +147,16 @@ static void WriteReg(uint32_t * reg, uint32_t clear_mask, uint32_t set_mask)
     volatile uint32_t mirror_reg = *reg;
     mirror_reg = (((mirror_reg) & (~(clear_mask))) | (set_mask));
     *reg = mirror_reg;
+}
+
+static void SetGpioClock(port_t P) 
+{ 
+    //TODO: clocks feature 
+    // do { 
+    //     volatile uint32_t tmpreg; 
+    //     SET_BIT(GPIO_RCC, RCC_AHB2ENR_GPIOAEN); 
+    //     /* Delay after an RCC peripheral clock enabling */ 
+    //     tmpreg = READ_BIT(GPIO_RCC, RCC_AHB2ENR_GPIOAEN); 
+    //     UNUSED(tmpreg); 
+    // } while(0); 
 }
