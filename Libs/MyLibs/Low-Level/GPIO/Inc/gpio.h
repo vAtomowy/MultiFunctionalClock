@@ -32,9 +32,11 @@ state_t ReadPin(port_t P, uint16_t pin);
 error_t WritePort(port_t P, uint32_t port_val);
 // ok
 uint32_t ReadPort(port_t P);
-
+// ok 
+int GetPortIndex(port_t port);
+// ok
+static error_t SetGpioClock(port_t P); 
 
 // internal method 
 static void WriteReg(uint32_t * reg, uint32_t clear_mask, uint32_t set_mask);
-static void SetGpioClock(port_t P); 
 

@@ -2,7 +2,9 @@
 #include "stm32l431xx.h"
 
 // ERROR TYPE
-typedef enum { 
+typedef enum {  
+    // ERR2 = -2, 
+    // ERR1 = -1, 
     OK = 0, 
     ERR1, 
     ERR2, 

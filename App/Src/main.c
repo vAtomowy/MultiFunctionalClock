@@ -3,6 +3,7 @@
 #include "stm32l431xx.h"
 #include "stm32l4xx_hal_def.h"
 
+void HardFault_Handler(void);
 void SystemClock_Config(void);
 void init_blink(void);
 void test_blink(void);
@@ -12,10 +13,6 @@ int main(void)
 
     HAL_Init();
     SystemClock_Config();
-
-    __HAL_RCC_GPIOA_CLK_ENABLE(); 
-    __HAL_RCC_GPIOB_CLK_ENABLE(); 
-    __HAL_RCC_GPIOC_CLK_ENABLE(); 
 
     // test hardware'u GPIO
     GPIO_TEST();
@@ -50,6 +47,13 @@ void test_blink(void)
       HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_RESET); 
       HAL_Delay(200);
 } 
+
+void HardFault_Handler(void){ 
+
+  while(1){ 
+    
+  }
+}
 
 void SystemClock_Config(void)
 {

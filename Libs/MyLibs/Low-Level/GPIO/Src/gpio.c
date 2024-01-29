@@ -4,7 +4,7 @@ error_t InitPin(cfg_pin_t * cfg_pin){
 
     // error flag
     error_t error = OK;
-
+ 
     // Which pins have to set ? 
     // In other words: In which position [X] we have to apply cfg_pin settings ? 
     // ex. REGISTER = (0b00X0100X)  
@@ -142,6 +142,38 @@ uint32_t ReadPort(port_t P){
     return (res); 
 }
 
+int GetPortIndex(port_t port) {
+    switch (port) {
+        case PORTA: return 0;
+        case PORTB: return 1;
+        case PORTC: return 2;
+        case PORTD: return 3;
+        case PORTE: return 4;
+        case PORTH: return 5;
+        default: return -1; 
+    }
+}
+
+error_t SetGpioClock(port_t P) 
+{ 
+    do { 
+        int index_port = GetPortIndex(P);
+        if(index_port < 0)
+        { 
+            return ERR2; 
+        }
+        else 
+        { 
+            volatile uint32_t *reg = GPIO_RCC;
+            volatile uint32_t mirror_reg = *reg;
+            gpio_rcc_pin_t gpio_rcc_pin = (gpio_rcc_pin_t)(RCC_AHB2ENR_GPIOAEN + index_port);
+            mirror_reg |= gpio_rcc_pin;
+            *reg = mirror_reg;  
+            __DSB();
+        }   
+    } while(0); 
+}
+
 static void WriteReg(uint32_t * reg, uint32_t clear_mask, uint32_t set_mask)
 { 
     volatile uint32_t mirror_reg = *reg;
@@ -149,14 +181,5 @@ static void WriteReg(uint32_t * reg, uint32_t clear_mask, uint32_t set_mask)
     *reg = mirror_reg;
 }
 
-static void SetGpioClock(port_t P) 
-{ 
-    //TODO: clocks feature 
-    // do { 
-    //     volatile uint32_t tmpreg; 
-    //     SET_BIT(GPIO_RCC, RCC_AHB2ENR_GPIOAEN); 
-    //     /* Delay after an RCC peripheral clock enabling */ 
-    //     tmpreg = READ_BIT(GPIO_RCC, RCC_AHB2ENR_GPIOAEN); 
-    //     UNUSED(tmpreg); 
-    // } while(0); 
-}
+
+
