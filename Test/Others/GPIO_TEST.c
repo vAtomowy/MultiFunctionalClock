@@ -12,17 +12,19 @@ void GPIO_TEST(void)
 { 
     cfg_pin_t PINA; 
     PINA.mode = OUT;
-    PINA.pin = PIN5; 
+    PINA.pin = PIN5|PIN7; 
     PINA.type = PUSH_PULL; 
     PINA.port = PORTA;   
     InitPin(&PINA); 
 
     cfg_pin_t PINEK;
     PINEK.pin = PIN13 | PIN14; 
-    PINEK.type = PUSH_PULL; 
+    PINEK.type = PUSH_PULL;
     PINEK.port = PORTB;
     PINEK.mode = OUT;  
     InitPin(&PINEK); 
+
+    //DeInitPin(&PINEK); 
 
     while (1)
     {
@@ -35,6 +37,5 @@ void GPIO_TEST(void)
         x=x; 
         delay(80000);
     }
-    
 
 }

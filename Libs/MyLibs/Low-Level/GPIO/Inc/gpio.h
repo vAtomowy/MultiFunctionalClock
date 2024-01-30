@@ -17,8 +17,9 @@ typedef struct{
 } __attribute__((packed)) cfg_pin_t;
 
 // methods for user (developer)
+// OK
 error_t InitPin(cfg_pin_t * cfg_pin);
-
+// OK
 error_t DeInitPin(cfg_pin_t * cfg_pin); 
 
 error_t InitPort(cfg_pin_t * cfg_pin, port_t P);
@@ -35,7 +36,9 @@ uint32_t ReadPort(port_t P);
 // ok 
 int GetPortIndex(port_t port);
 // ok
-static error_t SetGpioClock(port_t P); 
+error_t SetGpioClock(port_t P); 
+// ok
+error_t ResetGpioClock(port_t P);
 
 // internal method 
 static void WriteReg(uint32_t * reg, uint32_t clear_mask, uint32_t set_mask);

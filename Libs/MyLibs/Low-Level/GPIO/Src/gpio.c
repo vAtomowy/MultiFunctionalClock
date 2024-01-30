@@ -1,5 +1,5 @@
 #include "gpio.h" 
-//TODO: magic numbers ! 
+
 error_t InitPin(cfg_pin_t * cfg_pin){ 
 
     // error flag
@@ -12,8 +12,8 @@ error_t InitPin(cfg_pin_t * cfg_pin){
     { 
         if (cfg_pin->pin & (1 << position))
         {
-            // check turning on clock & enable  
-            SetGpioClock(cfg_pin->port);  
+            // check turning on clock & enable + checking errors
+            if(OK != SetGpioClock(cfg_pin->port)) return CLK_SET_ERR;
 
             // set MODE(MODER) 
             volatile uint32_t * address = (uint32_t*)(cfg_pin->port); //+ 0U;
@@ -76,8 +76,51 @@ error_t InitPin(cfg_pin_t * cfg_pin){
     return error; 
 }
 
-error_t DeInitPin(cfg_pin_t * cfg_pin){ 
-    return OK;
+error_t DeInitPin(cfg_pin_t * cfg_pin)
+{     
+    error_t error = OK;
+
+    for(uint16_t position=0; position<16; ++position)
+    { 
+        if (cfg_pin->pin & (1 << position))
+        {
+            // reset MODE(MODER) 
+            volatile uint32_t * address = (uint32_t*)(cfg_pin->port); //+ 0U;
+            uint32_t bits_mask = ((0x3U) << ((position) * 0x2U));
+            WriteReg(address, 0x0U, bits_mask); //set bits   
+
+            // reset ALTERNATIVE_FUNC(AFRL and AFRH) 
+            if(position < 8)
+            { 
+                address = ((uint32_t*)(cfg_pin->port)) + 8U;  // AFRL
+                bits_mask = ((0xFU) << ((position) * 0x4U));
+                WriteReg(address, bits_mask, 0x0U);   
+            }
+            else 
+            { 
+                address = ((uint32_t*)(cfg_pin->port)) + 9U;  // AFRH
+                bits_mask = ((0xFU) << ((position-0x8U) * 0x4U));
+                WriteReg(address, bits_mask, 0x0U);   
+            }
+
+            // reset PU(PUPDR) 
+            address = ((uint32_t*)(cfg_pin->port)) + 3U;
+            bits_mask = ((0x3U) << ((position) * 0x2U));
+            WriteReg(address, bits_mask, 0x0U);     
+
+            // set SPEED(OSPEEDR) 
+            address = ((uint32_t*)(cfg_pin->port)) + 2U;
+            bits_mask = ((0x3U) << ((position) * 0x2U));
+            WriteReg(address, bits_mask, 0x0U);       
+
+            // set TYPE(OTYPER): PP/OD 
+            address = ((uint32_t*)(cfg_pin->port)) + 1U;
+            bits_mask = ((0x1U) << ((position) * 0x1U));
+            WriteReg(address, bits_mask, 0x0U);    
+        } 
+    }
+    if(OK != ResetGpioClock(cfg_pin->port)) return CLK_SET_ERR;
+    return error;
 } 
 
 error_t InitPort(cfg_pin_t * cfg_pin, port_t P){ 
@@ -154,13 +197,14 @@ int GetPortIndex(port_t port) {
     }
 }
 
+
 error_t SetGpioClock(port_t P) 
 { 
     do { 
         int index_port = GetPortIndex(P);
         if(index_port < 0)
         { 
-            return ERR2; 
+            return CLK_SET_ERR; 
         }
         else 
         { 
@@ -172,6 +216,29 @@ error_t SetGpioClock(port_t P)
             __DSB();
         }   
     } while(0); 
+    return OK;
+}
+
+//TODO: remove repetitions ! 
+error_t ResetGpioClock(port_t P) 
+{ 
+    do { 
+        int index_port = GetPortIndex(P);
+        if(index_port < 0)
+        { 
+            return CLK_SET_ERR; 
+        }
+        else 
+        { 
+            volatile uint32_t *reg = GPIO_RCC;
+            volatile uint32_t mirror_reg = *reg;
+            gpio_rcc_pin_t gpio_rcc_pin = (gpio_rcc_pin_t)(RCC_AHB2ENR_GPIOAEN + index_port);
+            mirror_reg &= ~ gpio_rcc_pin;
+            *reg = mirror_reg;  
+            __DSB();
+        }   
+    } while(0); 
+    return OK;
 }
 
 static void WriteReg(uint32_t * reg, uint32_t clear_mask, uint32_t set_mask)

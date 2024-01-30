@@ -8,7 +8,8 @@ typedef enum {
     OK = 0, 
     ERR1, 
     ERR2, 
-    ERR3 
+    ERR3, 
+    CLK_SET_ERR 
 }error_t;
 
 // CLOCK BITS 
