@@ -67,6 +67,12 @@ add_definitions(${GLOBAL_DEFINES})
 
 include(compiler_flags.cmake)
 
+option(COMPILE_TESTS "Compile the tests" ON)
+if(COMPILE_TESTS)
+    message(STATUS "Compiling tests...")
+    add_subdirectory(Test)
+endif()
+
 add_arm_executable(${CMAKE_PROJECT_NAME} ${CPP_SRCS} ${C_SRCS} ${ASM_SRCS})
 
 arm_link_libraries(${CMAKE_PROJECT_NAME} ${LINKED_LIBS})
