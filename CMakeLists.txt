@@ -67,11 +67,29 @@ add_definitions(${GLOBAL_DEFINES})
 
 include(compiler_flags.cmake)
 
+## ------------------------------TESTS-------------------------------
+# Tests TODO: (only Debug !)
+# Folder exist ?
+if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/Test")
+    # If no, create it !
+    file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Test")
+endif()
+
+# Ustaw zmienną z nazwą pliku wykonywalnego
+set(TEST_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/Test)
+
 option(COMPILE_TESTS "Compile the tests" ON)
 if(COMPILE_TESTS)
     message(STATUS "Compiling tests...")
     add_subdirectory(Test)
 endif()
+
+add_subdirectory(Test)
+
+add_test(NAME my_test COMMAND build_gpio_target)
+
+set_property(DIRECTORY PROPERTY ADDITIONAL_MAKE_CLEAN_FILES TEST_OUTPUT_PATH)
+## ------------------------------------------------------------------
 
 add_arm_executable(${CMAKE_PROJECT_NAME} ${CPP_SRCS} ${C_SRCS} ${ASM_SRCS})
 
