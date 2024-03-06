@@ -36,7 +36,5 @@
 # ----------------------------------------------------------------------------------
 
 # add_subdirectory(App)
-add_subdirectory(Libs)
-
-
+include(${CMAKE_CURRENT_LIST_DIR}/Libs/CMakeLists.txt)
 

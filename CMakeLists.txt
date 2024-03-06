@@ -9,6 +9,15 @@ project(MultiFunctionalClock)
 
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
+include(ExternalProject)
+ExternalProject_Add(newTest
+SOURCE_DIR ${SRC_DIR}/Test
+DOWNLOAD_COMMAND ""
+INSTALL_COMMAND "ninja -v"
+TEST_COMMAND "ctest --verbose"
+)
+add_subdirectory(${SRC_DIR}/Test)  # Test jest podrzędnym projektem
+
 set(INCLUDE_DIRS
     ${SRC_DIR}/App/Inc
     ${SRC_DIR}/Libs/MyLibs/Low-Level/GPIO/Inc/
@@ -81,12 +90,13 @@ set(TEST_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/Test)
 option(COMPILE_TESTS "Compile the tests" ON)
 if(COMPILE_TESTS)
     message(STATUS "Compiling tests...")
-    add_subdirectory(Test)
+    # add_subdirectory(Test)
 endif()
 
-add_subdirectory(Test)
 
-add_test(NAME my_test COMMAND build_gpio_target)
+
+set(TEST_PATH ${SRC_DIR}/Test)
+message(STATUS "TEST_PATH: ${TEST_PATH}")
 
 set_property(DIRECTORY PROPERTY ADDITIONAL_MAKE_CLEAN_FILES TEST_OUTPUT_PATH)
 ## ------------------------------------------------------------------

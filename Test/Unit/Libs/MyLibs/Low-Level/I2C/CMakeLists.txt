@@ -10,13 +10,13 @@
 # |       │   │   ├── [CMakeLists.txt]
 # |       │   │   └── tests.c 
 # |       │   └── Libs
-# |       │       ├── [CMakeLists.txt] <<<<<<<<<< [You are here] <<<<<<<<<
+# |       │       ├── [CMakeLists.txt] 
 # |       │       └── MyLibs
-# |       │           ├── [CMakeLists.txt] 
+# |       │           ├── [CMakeLists.txt]
 # |       │           ├── Low-Level
 # |       |           |   ├── [CMakeLists.txt] 
 # |       │           │   ├── GPIO
-# |       │           │   │   └── [CMakeLists.txt]
+# |       │           │   │   └── [CMakeLists.txt] <<<<<<<<<< [You are here] <<<<<<<<<
 # |       │           │   ├── I2C
 # |       │           │   │   └── [CMakeLists.txt]
 # |       │           │   ├── QSPI
@@ -35,8 +35,8 @@
 # |           └── <other files and directories>
 # ----------------------------------------------------------------------------------
 
-# add_subdirectory(App)
-include(${CMAKE_CURRENT_LIST_DIR}/MyLibs/CMakeLists.txt)
+# Podrzedny plik CMakeLists.txt dla testów jednostkowych GPIO 
 
-
-
+list(APPEND SOURCE_TEST_DIRS
+    ${CMAKE_CURRENT_LIST_DIR}/i2c_test.cpp
+)

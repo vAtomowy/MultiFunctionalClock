@@ -35,13 +35,8 @@
 # |           └── <other files and directories>
 # ----------------------------------------------------------------------------------
 
-# Podrzedny plik CMakeLists.txt dla testów jednostkowych
+# Podrzedny plik CMakeLists.txt dla testów jednostkowych GPIO 
 
-# (4) Dodaj polecenie wykonania testów
-add_custom_target(build_gpio_target
-    COMMAND x86_64-w64-mingw32-g++ -o ${TEST_OUTPUT_PATH}/gpio_test ${CMAKE_CURRENT_SOURCE_DIR}/gpio_test.cpp -lCppUTest -lCppUTestExt
-    COMMENT "Build unit GPIO tests"
+list(APPEND SOURCE_TEST_DIRS
+    ${CMAKE_CURRENT_LIST_DIR}/gpio_test.cpp
 )
-
-# # Wykonaj niestandardowy cel podczas budowy całego projektu
-# add_dependencies(${CMAKE_PROJECT_NAME} build_gpio_target)

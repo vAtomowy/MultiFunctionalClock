@@ -35,7 +35,8 @@
 # |           └── <other files and directories>
 # ----------------------------------------------------------------------------------
 
-add_subdirectory(GPIO)
+include( ${CMAKE_CURRENT_LIST_DIR}/GPIO/CMakeLists.txt)
+include( ${CMAKE_CURRENT_LIST_DIR}/I2C/CMakeLists.txt)
 # add_subdirectory(I2C)
 # add_subdirectory(QSPI)
 # add_subdirectory(UART)

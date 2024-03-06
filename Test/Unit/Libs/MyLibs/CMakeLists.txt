@@ -35,4 +35,4 @@
 # |           └── <other files and directories>
 # ----------------------------------------------------------------------------------
 
-add_subdirectory(Low-Level)
+include( ${CMAKE_CURRENT_LIST_DIR}/Low-Level/CMakeLists.txt)
