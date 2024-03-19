@@ -8,7 +8,7 @@ enable_language(ASM)
 project(MultiFunctionalClock)
 
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-
+ 
 include(ExternalProject)
 ExternalProject_Add(newTest
 SOURCE_DIR ${SRC_DIR}/Test
@@ -30,6 +30,7 @@ set(INCLUDE_DIRS
 
 set(C_SRCS
     ${SRC_DIR}/App/Src/main.c
+    ${SRC_DIR}/App/Src/i2c.c
     ${SRC_DIR}/App/Src/stm32l4xx_hal_msp.c
     ${SRC_DIR}/App/Src/stm32l4xx_it.c
     ${SRC_DIR}/App/Src/syscalls.c
@@ -45,6 +46,8 @@ set(C_SRCS
     ${SRC_DIR}/Libs/STM32L4xx_HAL_Driver/src/stm32l4xx_hal_flash_ex.c
     ${SRC_DIR}/Libs/STM32L4xx_HAL_Driver/src/stm32l4xx_hal_flash_ramfunc.c
     ${SRC_DIR}/Libs/STM32L4xx_HAL_Driver/src/stm32l4xx_hal_gpio.c
+    ${SRC_DIR}/Libs/STM32L4xx_HAL_Driver/src/stm32l4xx_hal_i2c_ex.c
+    ${SRC_DIR}/Libs/STM32L4xx_HAL_Driver/src/stm32l4xx_hal_i2c.c
     ${SRC_DIR}/Libs/STM32L4xx_HAL_Driver/src/stm32l4xx_hal_pwr.c
     ${SRC_DIR}/Libs/STM32L4xx_HAL_Driver/src/stm32l4xx_hal_pwr_ex.c
     ${SRC_DIR}/Libs/STM32L4xx_HAL_Driver/src/stm32l4xx_hal_rcc.c

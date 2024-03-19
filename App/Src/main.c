@@ -1,26 +1,89 @@
-
 #include "main.h"
+
 #include "stm32l431xx.h"
 #include "stm32l4xx_hal_def.h"
+#include "stm32l4xx_hal_i2c.h" 
+
+#include "i2c.h" 
+
+I2C_HandleTypeDef i2c2; 
 
 void HardFault_Handler(void);
 void SystemClock_Config(void);
 void init_blink(void);
 void test_blink(void);
 
+void MX_I2C2_Init(void)
+{
+
+  i2c2.Instance = I2C2;
+  i2c2.Init.Timing = 0x10909EEE; //0x00702D95;
+  i2c2.Init.OwnAddress1 = 0;
+  i2c2.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  i2c2.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  i2c2.Init.OwnAddress2 = 0;
+  i2c2.Init.OwnAddress2Masks = I2C_OA2_NOMASK;
+  i2c2.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  i2c2.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init(&i2c2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure Analogue filter
+  */
+  if (HAL_I2CEx_ConfigAnalogFilter(&i2c2, I2C_ANALOGFILTER_DISABLE) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure Digital filter
+  */
+  if (HAL_I2CEx_ConfigDigitalFilter(&i2c2, 0) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+  /* USER CODE BEGIN I2C2_Init 2 */
+    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_I2C2;
+    PeriphClkInit.I2c2ClockSelection = RCC_I2C2CLKSOURCE_PCLK1;
+    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+    {
+      Error_Handler();
+    }
+  /* USER CODE END I2C2_Init 2 */
+}
+
 int main(void)
 {
+
     HAL_Init();
     SystemClock_Config();
 
-    // test hardware'u GPIO
-    GPIO_TEST();
-    
-    init_blink();
+  __HAL_RCC_SYSCFG_CLK_ENABLE();
+  __HAL_RCC_PWR_CLK_ENABLE();
+
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+
+	GPIO_InitTypeDef gpio = {0};
+	gpio.Mode = GPIO_MODE_AF_OD;
+	gpio.Pin = GPIO_PIN_10 | GPIO_PIN_11;		// SCL, SDA
+	gpio.Pull = GPIO_NOPULL;
+	gpio.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  gpio.Alternate = GPIO_AF4_I2C2;
+	HAL_GPIO_Init(GPIOB, &gpio);
+  
+  //GPIO_TEST();
+
+  __HAL_RCC_I2C2_CLK_ENABLE();
+  MX_I2C2_Init(); 
+ 
+    //init_blink();
+    i2c_setup();
 
     while (1)
     {
-      test_blink();
+      i2c_loop();
     }
 
 }
@@ -69,11 +132,15 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_MSI;
-  RCC_OscInitStruct.MSIState = RCC_MSI_ON;
-  RCC_OscInitStruct.MSICalibrationValue = 0;
-  RCC_OscInitStruct.MSIClockRange = RCC_MSIRANGE_6;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLM = 1;
+  RCC_OscInitStruct.PLL.PLLN = 20;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV7;
+  RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
+  RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -83,12 +150,12 @@ void SystemClock_Config(void)
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_MSI;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_4) != HAL_OK)
   {
     Error_Handler();
   }

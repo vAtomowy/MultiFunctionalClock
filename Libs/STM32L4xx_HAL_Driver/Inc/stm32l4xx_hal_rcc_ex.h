@@ -165,12 +165,12 @@ typedef struct
   uint32_t I2c1ClockSelection;     /*!< Specifies I2C1 clock source.
                                         This parameter can be a value of @ref RCCEx_I2C1_Clock_Source */
 
-#if defined(I2C2)
+
 
   uint32_t I2c2ClockSelection;     /*!< Specifies I2C2 clock source.
                                         This parameter can be a value of @ref RCCEx_I2C2_Clock_Source */
 
-#endif /* I2C2 */
+
 
   uint32_t I2c3ClockSelection;     /*!< Specifies I2C3 clock source.
                                         This parameter can be a value of @ref RCCEx_I2C3_Clock_Source */
@@ -353,9 +353,9 @@ typedef struct
 #endif
 #define RCC_PERIPHCLK_LPUART1          0x00000020U
 #define RCC_PERIPHCLK_I2C1             0x00000040U
-#if defined(I2C2)
+
 #define RCC_PERIPHCLK_I2C2             0x00000080U
-#endif
+
 #define RCC_PERIPHCLK_I2C3             0x00000100U
 #define RCC_PERIPHCLK_LPTIM1           0x00000200U
 #define RCC_PERIPHCLK_LPTIM2           0x00000400U
@@ -482,7 +482,7 @@ typedef struct
   * @}
   */
 
-#if defined(I2C2)
+
 /** @defgroup RCCEx_I2C2_Clock_Source I2C2 Clock Source
   * @{
   */
@@ -492,7 +492,6 @@ typedef struct
 /**
   * @}
   */
-#endif /* I2C2 */
 
 /** @defgroup RCCEx_I2C3_Clock_Source I2C3 Clock Source
   * @{
@@ -1472,7 +1471,6 @@ typedef struct
   */
 #define __HAL_RCC_GET_I2C1_SOURCE() (READ_BIT(RCC->CCIPR, RCC_CCIPR_I2C1SEL))
 
-#if defined(I2C2)
 
 /** @brief  Macro to configure the I2C2 clock (I2C2CLK).
   *
@@ -1494,7 +1492,6 @@ typedef struct
   */
 #define __HAL_RCC_GET_I2C2_SOURCE() (READ_BIT(RCC->CCIPR, RCC_CCIPR_I2C2SEL))
 
-#endif /* I2C2 */
 
 /** @brief  Macro to configure the I2C3 clock (I2C3CLK).
   *
@@ -2695,14 +2692,14 @@ void              HAL_RCCEx_CRS_ErrorCallback(uint32_t Error);
                 ((__SOURCE__) == RCC_I2C1CLKSOURCE_SYSCLK)|| \
                 ((__SOURCE__) == RCC_I2C1CLKSOURCE_HSI))
 
-#if defined(I2C2)
+
 
 #define IS_RCC_I2C2CLKSOURCE(__SOURCE__)   \
                (((__SOURCE__) == RCC_I2C2CLKSOURCE_PCLK1) || \
                 ((__SOURCE__) == RCC_I2C2CLKSOURCE_SYSCLK)|| \
                 ((__SOURCE__) == RCC_I2C2CLKSOURCE_HSI))
 
-#endif /* I2C2 */
+
 
 #define IS_RCC_I2C3CLKSOURCE(__SOURCE__)   \
                (((__SOURCE__) == RCC_I2C3CLKSOURCE_PCLK1) || \
