@@ -72,6 +72,15 @@ int main(void)
 	gpio.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   gpio.Alternate = GPIO_AF4_I2C2;
 	HAL_GPIO_Init(GPIOB, &gpio);
+
+  /*Configure GPIO pin : PtPin */
+  gpio.Pin = GPIO_PIN_13;
+  gpio.Mode = GPIO_MODE_OUTPUT_PP;
+  gpio.Pull = GPIO_NOPULL;
+  gpio.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &gpio);
+
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);
   
   //GPIO_TEST();
 
@@ -80,10 +89,11 @@ int main(void)
  
     //init_blink();
     i2c_setup();
+    clear();
 
     while (1)
     {
-      i2c_loop();
+      //i2c_loop();
     }
 
 }
